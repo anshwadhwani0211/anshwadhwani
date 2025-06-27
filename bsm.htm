@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Option Price Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        .container { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        input, button { padding: 10px; margin: 10px 0; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>BSM Option Price Calculator</h2>
+
+    <label>Option Type (C for Call, P for Put):</label>
+    <input type="text" id="type">
+
+    <label>Strike Price:</label>
+    <input type="number" id="strike_price">
+
+    <label>Spot Price:</label>
+    <input type="number" id="spot_price">
+
+    <label>Volatility (e.g. 0.2):</label>
+    <input type="number" step="any" id="volatility">
+
+    <label>Risk Free Rate (e.g. 0.05):</label>
+    <input type="number" step="any" id="risk_free_rate">
+
+    <label>Time to Expiry (in years):</label>
+    <input type="number" step="any" id="time">
+
+    <button onclick="calculate()">Calculate Option Price</button>
+
+    <h3 id="result"></h3>
+</div>
+
+<script>
+    async function calculate() {
+        const data = {
+            type: document.getElementById("type").value,
+            strike_price: document.getElementById("strike_price").value,
+            spot_price: document.getElementById("spot_price").value,
+            volatility: document.getElementById("volatility").value,
+            risk_free_rate: document.getElementById("risk_free_rate").value,
+            time: document.getElementById("time").value
+        };
+
+        const response = await fetch("http://127.0.0.1:5000/calculate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            document.getElementById("result").innerText = `Option Price: ${result.price.toFixed(4)}`;
+        } else {
+            document.getElementById("result").innerText = `Error: ${result.error}`;
+        }
+    }
+</script>
+
+</body>
+</html>
